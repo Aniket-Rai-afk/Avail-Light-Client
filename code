@@ -1,0 +1,168 @@
+### **My Steps for Deploying and Setting Up the Avail Light Client**
+
+Below is a detailed list of steps I followed to set up the Avail Light Client on a Linux server. These are the exact commands I used, along with explanations for what each step does.
+
+#### **1. Install Necessary Packages and Dependencies**
+
+First, I updated my package list and installed the required tools and libraries needed to build the project:
+
+```bash
+sudo apt-get update  # Update the package list to get the latest versions
+sudo apt-get install -y build-essential cmake libclang-dev libstdc++-10-dev pkg-config  # Install core development tools and libraries
+sudo apt-get install -y clang libsnappy-dev zlib1g-dev libbz2-dev liblz4-dev libzstd-dev  # Install additional libraries required by RocksDB
+```
+
+#### **2. Install and Update Rust**
+
+Next, I made sure Rust was installed and up to date on my system:
+
+```bash
+rustup update  # Update Rust to the latest version
+```
+
+#### **3. Clone the Avail Light Client Repository**
+
+I cloned the Avail Light Client repository to get the source code:
+
+```bash
+git clone https://github.com/availproject/avail-light.git  # Cloning the Avail Light Client repository
+cd avail-light  # Moving into the repository directory
+```
+
+#### **4. Build the Avail Light Client**
+
+To build the client, I used Cargo, Rust's build system. I ran the following command:
+
+```bash
+cargo build --release  # Compile the client in release mode for optimized performance
+```
+
+If I ran into any issues during the build, I cleaned up the build environment and tried again:
+
+```bash
+cargo clean  # Clean up the build environment to remove any previous build files
+cargo build --release  # Rebuild from scratch after cleaning
+```
+
+#### **5. Navigate to the Release Directory**
+
+Once the build succeeded, I navigated to the directory containing the compiled binary:
+
+```bash
+cd target/release  # Go to the release folder where the binary is located
+```
+
+#### **6. Make the Binary Executable (if needed)**
+
+To ensure the binary was executable, I ran:
+
+```bash
+chmod +x avail-light  # Make the binary executable
+```
+
+#### **7. Configure the Avail Light Client**
+
+I created a `config.toml` file to configure the client. I used `nano` to edit it:
+
+```bash
+nano config.toml  # Open or create the configuration file using nano editor
+```
+
+I added all the necessary configuration settings specific to my setup.
+
+#### **8. Run the Avail Light Client**
+
+I then ran the Avail Light Client with the following command:
+
+```bash
+./avail-light --config config.toml  # Run the client with my configuration file
+```
+
+#### **9. Set Up a Reverse Proxy with Nginx**
+
+To set up a reverse proxy for the RPC and Metrics endpoints, I installed Nginx:
+
+```bash
+sudo apt-get install -y nginx  # Install Nginx to act as a reverse proxy
+```
+
+I created a new configuration file for my server:
+
+```bash
+sudo nano /etc/nginx/sites-available/aniketserver  # Create or edit Nginx configuration for my server
+```
+
+I added the proxy configuration for `/api` and `/metrics` routes.
+
+#### **10. Enable the Nginx Configuration**
+
+To enable the new Nginx configuration, I created a symbolic link and then tested the configuration:
+
+```bash
+sudo ln -s /etc/nginx/sites-available/aniketserver /etc/nginx/sites-enabled/  # Enable the Nginx configuration
+sudo nginx -t  # Test the Nginx configuration for any syntax errors
+sudo systemctl restart nginx  # Restart Nginx to apply the changes
+```
+
+#### **11. Test the RPC and Metrics Endpoints**
+
+I tested the endpoints to make sure they were accessible:
+
+```bash
+curl http://your_domain_or_ip/api  # Test the RPC endpoint
+curl http://your_domain_or_ip/metrics  # Test the Metrics endpoint
+```
+
+I replaced `your_domain_or_ip` with my actual domain or IP address.
+
+#### **12. Check for Issues and Logs**
+
+If the client didn't start correctly, I checked the logs to troubleshoot:
+
+```bash
+journalctl -xe  # Check the system logs for errors
+```
+
+#### **13. Check Disk Space and Increase Swap if Needed**
+
+I checked the disk usage to make sure there was enough space:
+
+```bash
+df -h  # Check the available disk space
+```
+
+When I needed more memory, I increased the swap space like this:
+
+```bash
+sudo fallocate -l 4G /swapfile  # Create a 4GB swap file
+sudo chmod 600 /swapfile  # Set the right permissions for the swap file
+sudo mkswap /swapfile  # Initialize the swap space
+sudo swapon /swapfile  # Enable the swap space
+echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab  # Make the swap permanent
+```
+
+#### **14. Check and Update Rust Toolchain Compatibility**
+
+I made sure my Rust toolchain was compatible with the project:
+
+```bash
+rustup show  # Check the installed Rust toolchain and components
+```
+
+#### **15. Additional Troubleshooting Commands**
+
+To see more details when there were build issues, I used:
+
+```bash
+cargo build --release --verbose  # Build the project with detailed logs for debugging
+```
+
+If there were any permission errors, I adjusted the ownership of the project directory:
+
+```bash
+sudo chown -R $USER:$USER /path/to/avail-light  # Change ownership of the project directory
+```
+
+### **Conclusion**
+
+These are the steps I followed to deploy and set up the Avail Light Client. Each command and configuration step was necessary to ensure a smooth installation and to get the client up and running. This guide is what I used, and it doesnt worked well for me in my environment.
