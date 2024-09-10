@@ -163,6 +163,3 @@ If there were any permission errors, I adjusted the ownership of the project dir
 sudo chown -R $USER:$USER /path/to/avail-light  # Change ownership of the project directory
 ```
 
-### **Conclusion**
-
-These are the steps I followed to deploy and set up the Avail Light Client. Each command and configuration step was necessary to ensure a smooth installation and to get the client up and running. This guide is what I used, and it doesnt worked well for me in my environment.
